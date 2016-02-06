@@ -12,6 +12,24 @@
  */
 class ConnectionTest {
 
+    /**
+     *The Mysql user
+     * @var string
+     */
+    private $dbuser;
+    
+    /**
+     * The Mysql pass
+     * @var string 
+     */
+    private $dbpass;
+    
+    /**
+     * The Mysql database name
+     * @var string
+     */
+    private $dbname;
+    
     public function run() {
 
         // Test memcached
