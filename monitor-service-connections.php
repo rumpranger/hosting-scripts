@@ -10,11 +10,9 @@
  * Created 2016-01-21
  * @author Charles Weiss <charlesw@ex-situ.com>
  */
-class ConnectionTest
-{
+class ConnectionTest {
 
-    public function run()
-    {
+    public function run() {
 
         // Test memcached
         if ($this->checkMemcached() === true) {
@@ -35,10 +33,14 @@ class ConnectionTest
         if ($this->checkElasticsearch() === true) {
             echo '-elastic';
         }
+        
+        // Test MYSQL
+        if ($this->checkMysqlPDO() === true) {
+            echo '-mysql';
+        }
     }
 
-    private function checkMemcached()
-    {
+    private function checkMemcached() {
         $handle = popen('/sbin/service memcached status', "r");
         $data = fgets($handle);
         if (strpos($data, 'running') !== false) {
@@ -47,8 +49,7 @@ class ConnectionTest
         return false;
     }
 
-    private function checkHttpd()
-    {
+    private function checkHttpd() {
         $handle = popen('/sbin/service httpd status', "r");
         $data = fgets($handle);
         if (strpos($data, 'running') !== false) {
@@ -57,8 +58,7 @@ class ConnectionTest
         return false;
     }
 
-    private function checkNginx()
-    {
+    private function checkNginx() {
         $handle = popen('ps axu | grep nginx | wc -l', "r");
         $data = fgets($handle);
         if ($data > 1) {
@@ -67,8 +67,7 @@ class ConnectionTest
         return false;
     }
 
-    private function checkPhpFpm()
-    {
+    private function checkPhpFpm() {
         $handle = popen('ps axu | grep php-fpm | wc -l', "r");
         $data = fgets($handle);
         if ($data > 1) {
@@ -77,8 +76,7 @@ class ConnectionTest
         return false;
     }
 
-    private function checkElasticsearch()
-    {
+    private function checkElasticsearch() {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:9200/?pretty');
@@ -89,6 +87,16 @@ class ConnectionTest
         }
         return false;
     }
+
+    private function checkMysqlPDO() {
+        try {
+            $dbh = new \pdo('mysql:host=127.0.0.1:3306;dbname=' . $this->dbname, $this->dbuser, $this->dbpass, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            return true;
+        } catch (\PDOException $ex) {
+            return false;
+        }
+    }
+
 }
 
 $test = new ConnectionTest();
