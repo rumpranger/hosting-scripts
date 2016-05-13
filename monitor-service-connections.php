@@ -31,6 +31,36 @@ class ConnectionTest
      */
     private $dbname;
 
+    /**
+     * Rabbit MQ host
+     * @var string 
+     */
+    private $mqHost;
+
+    /**
+     * Rabbit MQ user
+     * @var string 
+     */
+    private $mqUser;
+
+    /**
+     * Rabbit MQ pass
+     * @var string 
+     */
+    private $mqPass;
+
+    /**
+     * Rabbit MQ vhost
+     * @var string 
+     */
+    private $mqVhost;
+
+    /**
+     * Rabbit MQ Port
+     * @var string 
+     */
+    private $mqPort;
+
     public function run()
     {
         // Test httpd
@@ -60,6 +90,11 @@ class ConnectionTest
         // Test MYSQL
         if ($this->checkMysqlPDO() === true) {
             echo '-mysql';
+        }
+
+        // Test RabbitMQ
+        if ($this->checkRabbitMQ() === true) {
+            echo '-rabbitmq';
         }
     }
 
@@ -124,6 +159,18 @@ class ConnectionTest
         } catch (\PDOException $ex) {
             return false;
         }
+    }
+
+    private function checkRabbitMQ()
+    {
+        $amqpConnection = new AMQPConnection();
+        $amqpConnection->setHost($this->mqHost);
+        $amqpConnection->setLogin($this->mqUser);
+        $amqpConnection->setPassword($this->mqPass);
+        $amqpConnection->setVhost($this->mqVhost);
+        $amqpConnection->setPort($this->mqPort);
+        $amqpConnection->connect();
+        return $amqpConnection->isConnected();
     }
 }
 
