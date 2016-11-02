@@ -61,6 +61,19 @@ class ConnectionTest
      */
     private $mqPort;
 
+    /**
+     * Disk path
+     * @var string 
+     */
+    private $diskPath;
+
+    /**
+     * Disk path, you probably want a value like .2 
+     * where any usage over 80% throws an error
+     * @var string 
+     */
+    private $diskThreshold;
+
     public function run()
     {
         // Test httpd
@@ -95,6 +108,11 @@ class ConnectionTest
         // Test RabbitMQ
         if ($this->checkRabbitMQ() === true) {
             echo '-rabbitmq';
+        }
+
+        // Test Disk Space
+        if ($this->checkDiskSpaceOk() === true) {
+            echo '-diskok';
         }
     }
 
@@ -171,6 +189,14 @@ class ConnectionTest
         $amqpConnection->setPort($this->mqPort);
         $amqpConnection->connect();
         return $amqpConnection->isConnected();
+    }
+
+    private function checkDiskSpaceOk()
+    {
+        if (disk_free_space($this->diskPath) / disk_total_space($this->diskPath) < $this->diskThreshold) {
+            return false;
+        }
+        return true;
     }
 }
 
