@@ -128,9 +128,9 @@ class ConnectionTest
 
     private function checkHttpd()
     {
-        $handle = popen('/sbin/service httpd status', "r");
-        $data = fgets($handle);
-        if (strpos($data, 'running') !== false) {
+        $handle = popen('ps axu | grep httpd | wc -l', "r");
+        $data = intval(fgets($handle));
+        if ($data > 2) {
             return true;
         }
         return false;
@@ -139,8 +139,8 @@ class ConnectionTest
     private function checkNginx()
     {
         $handle = popen('ps axu | grep nginx | wc -l', "r");
-        $data = fgets($handle);
-        if ($data > 1) {
+        $data = intval(fgets($handle));
+        if ($data > 2) {
             return true;
         }
         return false;
@@ -150,7 +150,7 @@ class ConnectionTest
     {
         $handle = popen('ps axu | grep php-fpm | wc -l', "r");
         $data = fgets($handle);
-        if ($data > 1) {
+        if ($data > 2) {
             return true;
         }
         return false;
